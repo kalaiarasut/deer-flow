@@ -48,12 +48,26 @@ export function parseAllowedDevOrigins(raw) {
   return (raw ?? "").split(",").map(normalizeHost).filter(Boolean);
 }
 
-/**
- * Read the configured hosts from the environment.
- *
- * @param {Record<string, string | undefined>} [env]
- * @returns {string[]}
- */
 export function getAllowedDevOrigins(env = process.env) {
-  return parseAllowedDevOrigins(env.DEER_FLOW_DEV_ALLOWED_ORIGINS);
+  const configured = parseAllowedDevOrigins(env.DEER_FLOW_DEV_ALLOWED_ORIGINS);
+
+  const isCodespaces = Boolean(
+    env.CODESPACES === "true" ||
+      env.CODESPACE_NAME ||
+      env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN,
+  );
+
+  const autoOrigins = [];
+  if (isCodespaces) {
+    autoOrigins.push(
+      "*.app.github.dev",
+      "*.github.dev",
+      "*.preview.app.github.dev",
+    );
+    if (env.CODESPACE_NAME) {
+      autoOrigins.push(`*.${env.CODESPACE_NAME}.app.github.dev`);
+    }
+  }
+
+  return Array.from(new Set([...autoOrigins, ...configured]));
 }

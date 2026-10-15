@@ -66,4 +66,23 @@ describe("getAllowedDevOrigins", () => {
   test("defaults to an empty list, keeping localhost-only the default", () => {
     expect(getAllowedDevOrigins({})).toEqual([]);
   });
+
+  test("automatically includes GitHub Codespaces origins when CODESPACES is true", () => {
+    expect(getAllowedDevOrigins({ CODESPACES: "true" })).toEqual([
+      "*.app.github.dev",
+      "*.github.dev",
+      "*.preview.app.github.dev",
+    ]);
+  });
+
+  test("includes named Codespace origins when CODESPACE_NAME is set", () => {
+    expect(
+      getAllowedDevOrigins({ CODESPACE_NAME: "test-codespace" }),
+    ).toEqual([
+      "*.app.github.dev",
+      "*.github.dev",
+      "*.preview.app.github.dev",
+      "*.test-codespace.app.github.dev",
+    ]);
+  });
 });

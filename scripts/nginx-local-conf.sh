@@ -16,7 +16,10 @@ REPO_ROOT="$(builtin cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && p
 SOURCE_CONF="$REPO_ROOT/docker/nginx/nginx.local.conf"
 RENDERED_CONF="$REPO_ROOT/temp/nginx.local.conf"
 
-bind_host="${BIND_HOST:-127.0.0.1}"
+# Default to 0.0.0.0 in cloud container environments like GitHub Codespaces so port-forwarding works,
+# while preserving the 127.0.0.1 loopback default for standard local development.
+bind_host="${BIND_HOST:-${CODESPACES:+0.0.0.0}}"
+bind_host="${bind_host:-127.0.0.1}"
 if [ "$bind_host" = "127.0.0.1" ]; then
     # Drop a copy rendered for an earlier BIND_HOST so its listen lines do not linger.
     rm -f "$RENDERED_CONF"

@@ -1,0 +1,48 @@
+{
+  "name": "DeerFlow Workspace",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22",
+      "pnpmVersion": "10.26.2"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableDockerCompose": true
+    }
+  },
+  "forwardPorts": [2026, 3000, 8001],
+  "portsAttributes": {
+    "2026": {
+      "label": "DeerFlow Web UI (Nginx)",
+      "onAutoForward": "openBrowser"
+    },
+    "3000": {
+      "label": "Frontend (Next.js)",
+      "onAutoForward": "silent"
+    },
+    "8001": {
+      "label": "Gateway API",
+      "onAutoForward": "silent"
+    }
+  },
+  "containerEnv": {
+    "DEER_FLOW_DEV_ALLOWED_ORIGINS": "*.app.github.dev,*.github.dev,127.0.0.1",
+    "BIND_HOST": "0.0.0.0",
+    "PORT": "2026"
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-python.python",
+        "charliermarsh.ruff"
+      ]
+    }
+  }
+}
